@@ -25,6 +25,7 @@ node_modules/
 dist/
 src-tauri/target/
 src-tauri/gen/
+release-assets/
 
 ## Local hooks
 .husky/pre-push

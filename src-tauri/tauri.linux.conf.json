@@ -1,11 +1,11 @@
 {
   "productName": "floral-notepaper",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "identifier": "com.floral-notepaper.app",
   "bundle": {
     "linux": {
       "deb": {
-        "depends": [],
+        "depends": ["libwebkit2gtk-4.1-0", "libayatana-appindicator3-1", "librsvg2-common"],
         "section": "utils",
         "priority": "optional",
         "desktopTemplate": "linux-desktop-template.hbs"
@@ -13,6 +13,7 @@
       "rpm": {
         "epoch": 0,
         "release": "1",
+        "depends": ["webkit2gtk4.1", "libappindicator-gtk3", "librsvg2"],
         "desktopTemplate": "linux-desktop-template.hbs"
       },
       "appimage": {
