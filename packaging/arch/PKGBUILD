@@ -1,0 +1,57 @@
+# Maintainer: Red198f <https://github.com/Red198f>
+pkgname=floral-notepaper
+pkgver=1.1.0
+pkgrel=1
+pkgdesc="轻量、优雅、现代化的本地便签工具"
+arch=('x86_64')
+url="https://github.com/Red198f/floral-notepaper"
+license=('MIT')
+depends=(
+  'gtk3'
+  'webkit2gtk-4.1'
+  'libayatana-appindicator'
+  'hicolor-icon-theme'
+)
+makedepends=(
+  'nodejs'
+  'npm'
+  'rust'
+  'cargo'
+  'patchelf'
+)
+source=("$pkgname-$pkgver.tar.gz::https://github.com/Red198f/floral-notepaper/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$pkgname-$pkgver"
+  npm ci
+}
+
+build() {
+  cd "$pkgname-$pkgver"
+  npm run build
+  npm run tauri build -- --bundles deb
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  local deb_root="src-tauri/target/release/bundle/deb"
+  local data_dir
+  data_dir="$(find "$deb_root" -maxdepth 1 -type d -name 'floral-notepaper_*' | head -n 1)"
+
+  if [ -z "$data_dir" ] || [ ! -d "$data_dir" ]; then
+    printf 'Unable to locate deb bundle output under %s\n' "$deb_root" >&2
+    exit 1
+  fi
+
+  install -dm755 "$pkgdir/usr/bin"
+  install -dm755 "$pkgdir/usr/share/applications"
+  install -dm755 "$pkgdir/usr/share/icons/hicolor"
+
+  install -Dm755 "$data_dir/usr/bin/floral-notepaper" "$pkgdir/usr/bin/floral-notepaper"
+  install -Dm644 "$data_dir/usr/share/applications/floral-notepaper.desktop" \
+    "$pkgdir/usr/share/applications/floral-notepaper.desktop"
+
+  cp -a "$data_dir/usr/share/icons/hicolor/." "$pkgdir/usr/share/icons/hicolor/"
+}
